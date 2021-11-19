@@ -10,6 +10,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -100,7 +103,18 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute (String result) {
             super.onPostExecute(result);
 
-            result_info.setText(result);
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                String temp = "Температура: " + jsonObject.getJSONObject("main").getDouble("temp");
+                String feels = "Ощущается как: " + jsonObject.getJSONObject("main").getDouble("feels_like");
+                String conditions = jsonObject.getJSONArray("weather").getJSONObject(0).getString("description");
+                conditions = Character.toUpperCase(conditions.charAt(0)) + conditions.substring(1);
+                result_info.setText(temp + "\n" + feels + "\n" + conditions);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
         }
     }
 }
